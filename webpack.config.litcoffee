@@ -49,7 +49,7 @@ Process Sass and use Autoprefixer.
     cssLoaders = ['style', 'css', 'autoprefixer-loader?last 2 versions']
     styleModLoaders = [
       { test: /\.scss$/, loaders: cssLoaders.concat([
-          "sass?precision=10&outputStyle=expanded&includePaths[]=" + path.resolve(__dirname, './bower_components')]) }
+          "sass?precision=10&outputStyle=expanded&sourceMap=true&includePaths[]=" + path.resolve(__dirname, './bower_components')]) }
       { test: /\.css$/ , loaders: cssLoaders }
     ]
 
@@ -108,6 +108,7 @@ Set development options by default:
       # We are watching in Gulp, so tell webpack not to watch
       watch: false
       # watchDelay: 300
+      devtool: 'source-map'
 
 Output options:
 
@@ -188,9 +189,12 @@ Generate asset -> asset-hash manifest:
 Set target path extension to `.css` for style assets, because we use `ExtractTextPlugin`:
 
                 assetStats = stats.assetsByChunkName
-                for entryName, entryPath of assetStats
-                  if /\.(?:scss|sass|css)$/.test(entries[entryName])
-                    assetStats[entryName] = entryPath.replace(/\.js$/, '.css')
+                setCssExt = (p) -> p.replace(/\.js$/, '.css')
+                for entryName, entryPath of assetStats when /\.(?:scss|sass|css)$/.test(entries[entryName])
+                  if _.isArray(entryPath)
+                    assetStats[entryName] = entryPath.map (p) -> setCssExt(p)
+                  else
+                    assetStats[entryName] = setCssExt(entryPath)
 
 Write asset-ref -> asset-hash manifest to outputDir/stats.json
 
