@@ -121,7 +121,11 @@ Output options:
 Look for required files in bower and node
 
       resolve:
-        modulesDirectories: ['bower_components', 'node_modules']
+        modulesDirectories: [
+          'src'
+          'bower_components'
+          'node_modules'
+        ]
 
 Define how modules should be loaded based on path extension:
 

@@ -14,6 +14,7 @@ Gulp to handle the pipeline flow:
     gzip = require('gulp-gzip')
     notify = require('gulp-notify')
     runSequence = require('run-sequence')
+    deployToGithubPages = require('gulp-gh-pages')
 
 Webpack to compile the assets:
 
@@ -52,7 +53,8 @@ Paths handled with Webpack:
 
     paths.webpackPaths = [
       'src/scripts', 'src/scripts/**/*',
-      'src/styles', 'src/styles/**/*'
+      'src/styles', 'src/styles/**/*',
+      'src/images', 'src/images/**/*'
     ]
 
 Files not handled with Webpack that reference Webpack assets:
@@ -64,7 +66,11 @@ Files not handled with Webpack that reference Webpack assets:
 Webpack configuration:
 
     paths.webpackConfig = './webpack.config.litcoffee'
-    webpackConfig = require(paths.webpackConfig)
+    loadWebpackConfig = ->
+      p = paths.webpackConfig
+      delete require.cache[require.resolve(p)] if webpackConfig
+      require(p)
+    webpackConfig = loadWebpackConfig()
 
 ## Tasks
 
@@ -92,7 +98,8 @@ Run a development server:
       logChange = (evt) -> gutil.log(gutil.colors.cyan(evt.path), 'changed')
       # Run webpack on config changes
       g.watch [paths.webpackConfig], (evt) ->
-        logChange
+        logChange evt
+        webpackConfig = loadWebpackConfig()
         g.start 'webpack'
       # Run build on app source changes
       g.watch [paths.srcFiles], (evt) ->
@@ -163,6 +170,15 @@ Add fingerprinting hashes to asset references:
       for p in paths.replaceAssetRefs
         replaceWebpackAssetUrlsInFile p, stats
       cb()
+
+### `deploy-gh-pages`
+
+Deploy to gh-pages branch:
+
+    g.task 'deploy-gh-pages', ->
+      webpackConfig.output.publicPath = "/gulp-webpack-react-bootstrap-sass-template/assets/"
+      runSequence 'clean', 'build', ->
+        g.src(paths.distFiles).pipe(deployToGithubPages())
 
 ## Helpers
 

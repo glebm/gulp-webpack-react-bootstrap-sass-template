@@ -10,7 +10,13 @@ Tag = React.createClass
       <span className='label label-primary'>{this.props.children}</span>
     )`
 
-logoUrls = ["gulp-logo.png", "webpack-logo.png", "react-logo.png", "sass-logo.png", "twbs-logo.png"].map (p) -> "/images/#{p}"
+poweredBy = [
+  { logoURL: require('images/gulp-logo.png')    }
+  { logoURL: require('images/webpack-logo.png') }
+  { logoURL: require('images/react-logo.png')   }
+  { logoURL: require('images/sass-logo.png')    }
+  { logoURL: require('images/twbs-logo.png')    }
+]
 
 StarterApp = React.createClass
   render: ->
@@ -44,14 +50,21 @@ StarterApp = React.createClass
             <h2 className='panel-title'>Powered By</h2>
           </div>
           <div className='panel-body'>
-            {logoUrls.map(function(imageURL, i){
-              return <HeartbeatAnimationGroup phase={200 * ((i + logoUrls.length / 2) % logoUrls.length)}>
-                       <img className='img-responsive' src={imageURL} />
-                     </HeartbeatAnimationGroup>;
-            })}
+            {renderPoweredByItems(poweredBy)}
           </div>
         </div>
       </div>
     )`
+
+renderPoweredByItems = (items) ->
+  n = items.length
+  items.map (item, i) ->
+    imageURL = item.logoURL
+    `(
+      <HeartbeatAnimationGroup phase={200 * ((i + n / 2) % n)}>
+      <img className='img-responsive' src={imageURL} key={imageURL} />
+      </HeartbeatAnimationGroup>
+    )`
+
 
 module.exports = StarterApp
