@@ -94,6 +94,28 @@ Define `__PRODUCTION__: false` variable (set to true on `useProductionSettings()
       __PRODUCTION__: JSON.stringify(false)
     )
 
+### Generate a manifest
+
+Generate a manifest mapping logical paths to actual paths:
+
+    generateManifestPlugin = (compiler) ->
+      @plugin 'done', (stats) ->
+        stats = stats.toJson()
+
+Set target path extension to `.css` for style assets, because we use `ExtractTextPlugin`:
+
+        assetStats = stats.assetsByChunkName
+        setCssExt = (p) -> p.replace(/\.js$/, '.css')
+        for entryName, entryPath of assetStats when /\.(?:scss|sass|css)$/.test(entries[entryName])
+          if _.isArray(entryPath)
+            assetStats[entryName] = entryPath.map (p) -> setCssExt(p)
+          else
+            assetStats[entryName] = setCssExt(entryPath)
+
+Write asset-ref -> asset-hash manifest to outputDir/stats.json
+
+        fs.writeFileSync(path.join(outputDir, "asset-stats.json"), JSON.stringify(stats.assetsByChunkName, null, 2))
+
 ### Other options
 
     _.merge module.exports,
@@ -136,14 +158,9 @@ Define how modules should be loaded based on path extension:
 Define the plugins:
 
       plugins: [
-
-`definePlugin` defines variables to be substituted in the assets (a la macro):
-
         definePlugin
-
-`extractTextPlugin` (defined above) will compile CSS to a .css file, as opposed to inlining it as a string in a .js file.
-
         extractTextPlugin
+        generateManifestPlugin
       ]
 
 
@@ -151,7 +168,7 @@ Define the plugins:
 
 Export a method that applies production settings (used in gulpfile):
 
-      mergeProductionConfig: ->
+      mergeProductionConfig: (addHashes = true) ->
 
 Production plugins:
 
@@ -159,11 +176,18 @@ Set `__PRODUCTION__` to true in the `DefinePlugin` instance:
 
         definePlugin.definitions.__PRODUCTION__ = JSON.stringify(true)
 
+
+        if addHashes
+
+Add content hashes to the output filenames:
+
+          _.merge @,
+            output:
+              filename: "[name]-[hash].js"
+
 Tell `ExtractTextPlugin` to append hashes (BROKEN, see [plugin issue #9](https://github.com/webpack/extract-text-webpack-plugin/issues/9)):
 
-        extractTextPlugin.filename = '[name]-[hash].css'
-
-Merge in production config (deep merge):
+          extractTextPlugin.filename = '[name]-[hash].css'
 
         _.merge @,
 
@@ -173,35 +197,10 @@ Disable development settings:
           watch: false
           devtool: null
 
-Add content hashes to the output filenames:
-
-          output:
-            filename: "[name]-[hash].js"
-
           plugins: @plugins.concat [
 
 Minify JavaScript with UglifyJS:
 
             new webpack.optimize.UglifyJsPlugin()
-
-Generate asset -> asset-hash manifest:
-
-            generateManifestPlugin = (compiler) ->
-              @plugin 'done', (stats) ->
-                stats = stats.toJson()
-
-Set target path extension to `.css` for style assets, because we use `ExtractTextPlugin`:
-
-                assetStats = stats.assetsByChunkName
-                setCssExt = (p) -> p.replace(/\.js$/, '.css')
-                for entryName, entryPath of assetStats when /\.(?:scss|sass|css)$/.test(entries[entryName])
-                  if _.isArray(entryPath)
-                    assetStats[entryName] = entryPath.map (p) -> setCssExt(p)
-                  else
-                    assetStats[entryName] = setCssExt(entryPath)
-
-Write asset-ref -> asset-hash manifest to outputDir/stats.json
-
-                fs.writeFileSync(path.join(outputDir, "asset-stats.json"), JSON.stringify(stats.assetsByChunkName, null, 2))
 
           ]

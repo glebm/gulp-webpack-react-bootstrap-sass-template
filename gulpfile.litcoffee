@@ -15,6 +15,7 @@ Gulp to handle the pipeline flow:
     notify = require('gulp-notify')
     runSequence = require('run-sequence')
     deployToGithubPages = require('gulp-gh-pages')
+    _ = require('lodash')
 
 Webpack to compile the assets:
 
@@ -31,6 +32,13 @@ A number of low-level utilities:
     tty = require('tty')
     path = require('path')
     through2 = require('through2')
+
+
+A helper for requiring files uncached (useful for config files)
+
+    requireUncached = (path) ->
+      delete require.cache[require.resolve(path)]
+      require(path)
 
 ## Configuration
 
@@ -66,10 +74,7 @@ Files not handled with Webpack that reference Webpack assets:
 Webpack configuration:
 
     paths.webpackConfig = './webpack.config.litcoffee'
-    loadWebpackConfig = ->
-      p = paths.webpackConfig
-      delete require.cache[require.resolve(p)] if webpackConfig
-      require(p)
+    loadWebpackConfig = -> requireUncached(paths.webpackConfig)
     webpackConfig = loadWebpackConfig()
 
 ## Tasks
@@ -116,9 +121,9 @@ Run a development server:
 Production build:
 
     g.task 'prod', (cb) ->
-      # Apply production config, it will append hashes to file names among other things
-      webpackConfig.mergeProductionConfig()
-      runSequence 'clean', 'build', 'build-replace-asset-refs', 'gzip', cb
+      # Apply production config, pass true to append hashes to file names
+      setWebpackConfig loadWebpackConfig().mergeProductionConfig(true)
+      runSequence 'clean', 'build', 'gzip', cb
 
 ### `clean`
 
@@ -131,7 +136,8 @@ Clean (remove) the distribution folder:
 
 Build all assets (development build):
 
-    g.task 'build', ['webpack', 'copy'], ->
+    g.task 'build', (cb) ->
+      runSequence 'webpack', 'copy', 'build-replace-asset-refs', cb
 
 ### `webpack`
 
@@ -166,21 +172,32 @@ GZip assets:
 Add fingerprinting hashes to asset references:
 
     g.task 'build-replace-asset-refs', (cb) ->
-      stats = require("./#{paths.dist}/assets/asset-stats.json")
+      stats = requireUncached("./#{paths.dist}/assets/asset-stats.json")
       for p in paths.replaceAssetRefs
-        replaceWebpackAssetUrlsInFile p, stats
+        replaceWebpackAssetUrlsInFile p, stats, webpackConfig.output.publicPath
       cb()
 
 ### `deploy-gh-pages`
 
+Build for gh-pages-branch. Same as production but do not append hashes:
+
+    g.task 'build-gh-pages', (cb) ->
+      webpackConfig = _.merge loadWebpackConfig().mergeProductionConfig(false),
+        output:
+         publicPath: "/gulp-webpack-react-bootstrap-sass-template/assets/"
+      runSequence 'clean', 'build', cb
+
 Deploy to gh-pages branch:
 
-    g.task 'deploy-gh-pages', ->
-      webpackConfig.output.publicPath = "/gulp-webpack-react-bootstrap-sass-template/assets/"
-      runSequence 'clean', 'build', ->
-        g.src(paths.distFiles).pipe(deployToGithubPages())
+    g.task 'deploy-gh-pages', ['build-gh-pages'], ->
+      g.src(paths.distFiles).pipe(deployToGithubPages())
 
 ## Helpers
+
+Set the "global" `webpackConfig` to argument.
+
+    setWebpackConfig = (conf) ->
+      webpackConfig = conf
 
 ### `createServers`
 
@@ -200,7 +217,7 @@ Create development assets server and a live reload server
 
 Replace asset URLs with the ones from Webpack in a file:
 
-    replaceWebpackAssetUrlsInFile = (filename, stats) ->
+    replaceWebpackAssetUrlsInFile = (filename, stats, publicPath) ->
 
 Use a `through2` pipe to replace file contents in the vinyl virtual file system:
 
@@ -208,7 +225,7 @@ Use a `through2` pipe to replace file contents in the vinyl virtual file system:
       .on('error', handleErrors)
       .pipe(
         through2.obj (vinylFile, enc, tCb) ->
-          vinylFile.contents = new Buffer(replaceWebpackAssetUrls(String(vinylFile.contents), stats))
+          vinylFile.contents = new Buffer(replaceWebpackAssetUrls(String(vinylFile.contents), stats, publicPath))
           @push vinylFile
           tCb()
       )
@@ -218,7 +235,7 @@ Use a `through2` pipe to replace file contents in the vinyl virtual file system:
 
 Replace asset URLs with the ones from Webpack:
 
-    replaceWebpackAssetUrls = (text, stats) ->
+    replaceWebpackAssetUrls = (text, stats, publicPath) ->
 
 For each entry in Webpack stats (such as `{'main': 'assets/main-abcde.js'}`):
 
@@ -231,7 +248,8 @@ If source-maps are on, then targetPath is an array such as `['file.js', 'file.js
 
 Replace logical path with the target path:
 
-        text = text.replace "#{entryName}#{path.extname(targetPath)}", targetPath
+        ref = "assets/#{entryName}#{path.extname(targetPath)}"
+        text = text.replace ref, publicPath + targetPath
 
 All done:
 
