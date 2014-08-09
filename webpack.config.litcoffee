@@ -10,11 +10,11 @@ First, require the dependencies:
     _       = require('lodash')
 
 
-Define an empty configuration
+Define an empty configuration:
 
     module.exports = {}
 
-List bundle entry points, i.e. packages to compile in the distribution. See [docs](http://webpack.github.io/docs/configuration.html#entry).
+List entry bundles, i.e. packages to compile in the distribution. See [docs](http://webpack.github.io/docs/configuration.html#entry).
 
     module.exports.entry =
       main             : "./src/scripts/main.litcoffee"
@@ -22,8 +22,9 @@ List bundle entry points, i.e. packages to compile in the distribution. See [doc
       "vendor/es5-shim": "./bower_components/es5-shim/es5-shim.js"
       "vendor/es5-sham": "./bower_components/es5-shim/es5-sham.js"
 
+## Loaders
 
-Then, define how files should be loaded (required) based on the extension:
+Define how files should be loaded (required) based on the extension.
 
 ### Scripts
 
