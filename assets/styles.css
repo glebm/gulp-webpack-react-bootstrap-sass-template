@@ -188,8 +188,8 @@ td, th {
 
 @font-face {
   font-family: 'Glyphicons Halflings';
-  src: url(/assets/7ad17c6085dee9a33787bac28fb23d46.eot);
-  src: url(/assets/7ad17c6085dee9a33787bac28fb23d46.eot?#iefix) format('embedded-opentype'), url(/assets/68ed1dac06bf0409c18ae7bc62889170.woff) format('woff'), url(/assets/e49d52e74b7689a0727def99da31f3eb.ttf) format('truetype'), url(/assets/32941d6330044744c02493835b799e90.svg#glyphicons_halflingsregular) format('svg'); }
+  src: url(/gulp-webpack-react-bootstrap-sass-template/assets/7ad17c6085dee9a33787bac28fb23d46.eot);
+  src: url(/gulp-webpack-react-bootstrap-sass-template/assets/7ad17c6085dee9a33787bac28fb23d46.eot?#iefix) format('embedded-opentype'), url(/gulp-webpack-react-bootstrap-sass-template/assets/68ed1dac06bf0409c18ae7bc62889170.woff) format('woff'), url(/gulp-webpack-react-bootstrap-sass-template/assets/e49d52e74b7689a0727def99da31f3eb.ttf) format('truetype'), url(/gulp-webpack-react-bootstrap-sass-template/assets/32941d6330044744c02493835b799e90.svg#glyphicons_halflingsregular) format('svg'); }
 
 .glyphicon {
   position: relative;

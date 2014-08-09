@@ -34,7 +34,7 @@
 /******/ 	__webpack_require__.c = installedModules;
 /******/
 /******/ 	// __webpack_public_path__
-/******/ 	__webpack_require__.p = "/assets/";
+/******/ 	__webpack_require__.p = "/gulp-webpack-react-bootstrap-sass-template/assets/";
 /******/
 /******/ 	// Load entry module and return exports
 /******/ 	return __webpack_require__(0);
@@ -119,7 +119,7 @@
 	          React.DOM.div({className: "panel-body"}, 
 	            logoUrls.map(function(imageURL, i){
 	              return HeartbeatAnimationGroup({phase: 200 * ((i + logoUrls.length / 2) % logoUrls.length)}, 
-	                       React.DOM.img({className: "img-responsive", src: imageURL})
+	                       React.DOM.img({className: "img-responsive", src: imageURL, key: imageURL})
 	                     );
 	            })
 	          )
