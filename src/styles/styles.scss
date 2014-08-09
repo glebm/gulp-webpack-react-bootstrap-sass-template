@@ -1,0 +1,29 @@
+$icon-font-path: '~bootstrap-sass-official/assets/fonts/bootstrap/';
+@import "bootstrap-sass-official/assets/stylesheets/bootstrap";
+
+body {
+  background-color: #cfa;
+}
+
+.bs-masthead {
+  position: relative;
+  padding: 30px 15px;
+  text-align: center;
+  text-shadow: 0 1px 0 rgba(0,0,0,.15);
+  h1 {
+    font-size: 50px;
+    line-height: 1;
+    color: #d82a00;
+  }
+}
+
+
+.fade-enter {
+  opacity: 0.01;
+  transition: opacity 5s ease-in;
+}
+
+.fade-enter.fade-enter-active {
+  opacity: 1;
+}
+
