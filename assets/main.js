@@ -82,7 +82,7 @@
 	});
 	
 	logoUrls = ["gulp-logo.png", "webpack-logo.png", "react-logo.png", "sass-logo.png", "twbs-logo.png"].map(function(p) {
-	  return "/images/" + p;
+	  return !(function webpackMissingModule() { var e = new Error("Cannot find module \"~src/images\""); e.code = 'MODULE_NOT_FOUND'; throw e; }());
 	});
 	
 	StarterApp = React.createClass({displayName: 'StarterApp',
