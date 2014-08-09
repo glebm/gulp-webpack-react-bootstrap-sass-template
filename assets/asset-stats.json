@@ -1,0 +1,6 @@
+{
+  "vendor/es5-shim": "vendor/es5-shim.js",
+  "vendor/es5-sham": "vendor/es5-sham.js",
+  "main": "main.js",
+  "styles": "styles.css"
+}
