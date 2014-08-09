@@ -145,13 +145,6 @@ Export a method that applies production settings (used in gulpfile):
 
 Production plugins:
 
-        plugins = @plugins.concat [
-
-Minify JavaScript with UglifyJS:
-
-          new webpack.optimize.UglifyJsPlugin()
-        ]
-
 Set `__PRODUCTION__` to true in the `DefinePlugin` instance:
 
         definePlugin.definitions.__PRODUCTION__ = JSON.stringify(true)
@@ -175,6 +168,9 @@ Add content hashes to the output filenames:
           output:
             filename: "[name]-[hash].js"
 
-Production-only plugins:
+          plugins: @plugins.concat [
 
-          plugins: plugins
+Minify JavaScript with UglifyJS:
+
+            new webpack.optimize.UglifyJsPlugin()
+          ]
