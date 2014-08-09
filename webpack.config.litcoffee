@@ -14,13 +14,13 @@ Define an empty configuration:
 
     module.exports = {}
 
-List entry bundles, i.e. packages to compile in the distribution. See [docs](http://webpack.github.io/docs/configuration.html#entry).
+Entry bundles, i.e. package source paths. See [docs](http://webpack.github.io/docs/configuration.html#entry).
 
     module.exports.entry =
-      main             : "./src/scripts/main.litcoffee"
-      "styles"         : "./src/styles/styles.scss"
-      "vendor/es5-shim": "./bower_components/es5-shim/es5-shim.js"
-      "vendor/es5-sham": "./bower_components/es5-shim/es5-sham.js"
+      "main"            : "./src/scripts/main.litcoffee"
+      "styles"          : "./src/styles/styles.scss"
+      "vendor/es5-shim" : "./bower_components/es5-shim/es5-shim.js"
+      "vendor/es5-sham" : "./bower_components/es5-shim/es5-sham.js"
 
 ## Loaders
 
@@ -28,22 +28,24 @@ Define how files should be loaded (required) based on the extension.
 
 ### Scripts
 
-Process CoffeeScript and JSX in CoffeeScript and JavaScript.
+Process CoffeeScript and JSX.
 
+    jsLoaders = ["jsx"]
     scriptModLoaders = [
-      { test: /\.coffee$/, loader: "jsx!coffee" }
-      { test: /\.litcoffee$/, loader: "jsx!coffee?literate"}
-      { test: /\.js$/, loader: "jsx" }
+      { test: /\.coffee$/   , loaders: jsLoaders.concat(["coffee"]) }
+      { test: /\.litcoffee$/, loaders: jsLoaders.concat(["coffee?literate"]) }
+      { test: /\.js$/       , loaders: jsLoaders }
     ]
 
 ### Styles
 
-Process with Sass and Autoprefixer.
+Process Sass and use Autoprefixer.
 
     cssLoaders = ['style', 'css', 'autoprefixer-loader?last 2 versions']
     styleModLoaders = [
-      { test: /\.scss$/, loaders: cssLoaders.concat(["sass?precision=10&outputStyle=expanded&includePaths[]=" + path.resolve(__dirname, './bower_components')]) }
-      { test: /\.css$/, loaders: cssLoaders }
+      { test: /\.scss$/, loaders: cssLoaders.concat([
+          "sass?precision=10&outputStyle=expanded&includePaths[]=" + path.resolve(__dirname, './bower_components')]) }
+      { test: /\.css$/ , loaders: cssLoaders }
     ]
 
 ### Static assets
@@ -51,13 +53,13 @@ Process with Sass and Autoprefixer.
 Embed data-URLs into CSS and JS for small images and `.woff` fonts:
 
     staticModLoaders = [
-      { test: /\.gif$/, loader: "url?limit=10000&mimetype=image/gif" }
-      { test: /\.jpg$/, loader: "url?limit=10000&mimetype=image/jpg" }
-      { test: /\.png$/, loader: "url?limit=10000&mimetype=image/png" }
+      { test: /\.gif$/ , loader: "url?limit=10000&mimetype=image/gif" }
+      { test: /\.jpg$/ , loader: "url?limit=10000&mimetype=image/jpg" }
+      { test: /\.png$/ , loader: "url?limit=10000&mimetype=image/png" }
       { test: /\.woff$/, loader: "url?limit=10000&mimetype=application/font-woff" }
-      { test: /\.ttf$/, loader: "file?mimetype=application/vnd.ms-fontobject" }
-      { test: /\.eot$/, loader: "file?mimetype=application/x-font-ttf" }
-      { test: /\.svg$/, loader: "file?mimetype=image/svg+xml" }
+      { test: /\.ttf$/ , loader: "file?mimetype=application/vnd.ms-fontobject" }
+      { test: /\.eot$/ , loader: "file?mimetype=application/x-font-ttf" }
+      { test: /\.svg$/ , loader: "file?mimetype=image/svg+xml" }
     ]
 
 ### Output CSS to `.css` files
