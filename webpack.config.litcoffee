@@ -185,7 +185,7 @@ Generate asset -> asset-hash manifest:
               @plugin 'done', (stats) ->
                 stats = stats.toJson()
 
-Set target path extension to `.css` for style assets, because we use ExtractTextPlugin
+Set target path extension to `.css` for style assets, because we use `ExtractTextPlugin`:
 
                 assetStats = stats.assetsByChunkName
                 for entryName, entryPath of assetStats

@@ -208,16 +208,12 @@ For each entry in Webpack stats (such as `{'main': 'assets/main-abcde.js'}`):
 
       for entryName, targetPath of stats
 
-First, figure out what the entry's file extension is:
-
-Webpack compiles CSS to JS, so `targetPath` always has `.js` extension. Let's check against a a whitelist:
-
-If source-maps are on, then targetPath is an array, such as [ 'file.js', 'file.js.map' ]. Get the right file:
+If source-maps are on, then targetPath is an array such as `['file.js', 'file.js.map'`]`. Get the right file:
 
         if util.isArray(targetPath)
           targetPath = _.find targetPath, (p) -> path.extname(p).toLowerCase() != '.map'
 
-Replace basic path with the hashed path:
+Replace logical path with the target path:
 
         text = text.replace "#{entryName}#{path.extname(targetPath)}", targetPath
 
