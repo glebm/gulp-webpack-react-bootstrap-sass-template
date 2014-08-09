@@ -122,7 +122,7 @@ Set `__PRODUCTION__` to true in DefinePlugin:
         for plugin in plugins when plugin.definitions?.__PRODUCTION__
           plugin.definitions.__PRODUCTION__ = JSON.stringify(true)
 
-Tell `ExtractTextPlugin` to append hashes:
+Tell `ExtractTextPlugin` to append hashes (BROKEN, see [plugin issue #9](https://github.com/webpack/extract-text-webpack-plugin/issues/9)):
 
         for plugin in plugins when plugin.filename == '[name].css'
           plugin.filename = '[name]-[hash].css'
