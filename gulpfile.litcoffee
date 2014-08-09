@@ -175,11 +175,15 @@ Replace asset URLs with the ones from Webpack:
     replaceWebpackAssetUrls = (text, stats, config) ->
       statsObj = stats.toJson()
       for chunkName, fullName of statsObj.assetsByChunkName
-        # Assume JS extension unless .css is specified
-        chunkName += '.js' unless /\.css$/.test(chunkName)
+        # Assume JS extension unless one is specified
+        if /^(?:styles)$/.test(chunkName)
+          chunkExt = '.css'
+          fullName = fullName.replace(/\.js$/, '.css')
+        else
+          chunkExt = '.js'
         # If source-maps are on, then fullName is an array, such as [ 'file.js', 'file.js.map' ]
         fullName = (filename for filename in fullName when path.extname(filename).toLowerCase() == chunkExt)[0] if util.isArray(fullName)
-        text = text.replace chunkName, fullName
+        text = text.replace chunkName + chunkExt, fullName
       text
 
 Route non-gulp errors through gulp-notify:

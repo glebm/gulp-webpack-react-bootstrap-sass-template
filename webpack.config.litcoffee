@@ -1,13 +1,15 @@
 # Webpack Configuration
 
-Webpack compiles assets such as CoffeeScript and Sass and handles requires and imports.
+[Webpack](https://github.com/webpack/webpack) handles asset compilation (Sass, CoffeeScript, etc),
+and processes JS `require`, Sass `@import`, and CSS `url()`.
 
-First, require dependencies:
+First, require the dependencies:
 
-    path = require("path")
-    webpack = require("webpack")
-    _ = require('lodash')
+    path    = require('path')
+    webpack = require('webpack')
+    _       = require('lodash')
 
+## CSS configuration
 
 List of loader names for CSS files:
 
@@ -23,7 +25,7 @@ Style module loaders (used later):
 `ExtractTextPlugin` is an experimental plugin to output CSS in `.css` and not `.js` files. Create plugin instance (used later):
 
     ExtractTextPlugin = require("extract-text-webpack-plugin")
-    extractTextPlugin = new ExtractTextPlugin("[name]", allChunks: true)
+    extractTextPlugin = new ExtractTextPlugin("[name].css", allChunks: true)
 
 Override style loaders to use `ExtractTextPlugin`:
 
@@ -31,7 +33,7 @@ Override style loaders to use `ExtractTextPlugin`:
       test: e.test
       loader: ExtractTextPlugin.extract(e.loaders.slice(1).join('!'))
 
-## Export configuration:
+## Configuration
 
     module.exports =
 
@@ -39,7 +41,7 @@ List of bundle entry points, i.e. packages to compile in the distribution. See [
 
       entry:
         main             : "./src/scripts/main.litcoffee"
-        "styles.css"     : "./src/styles/styles.scss"
+        "styles"         : "./src/styles/styles.scss"
         "vendor/es5-shim": "./bower_components/es5-shim/es5-shim.js"
         "vendor/es5-sham": "./bower_components/es5-shim/es5-sham.js"
 
@@ -57,9 +59,9 @@ Set development options by default:
 Output options:
 
       output:
-        path: path.join(__dirname, "dist", "assets")
-        publicPath: "/assets/"
-        filename: "[name].js"
+        path         : path.join(__dirname, "dist", "assets")
+        publicPath   : "/assets/"
+        filename     : "[name].js"
         chunkFilename: "[name].[id].[chunkhash].js"
 
 Look for required files in bower and node
@@ -100,13 +102,32 @@ Define the plugins:
       ]
 
 
-## Production Settings
+## Production
 
-Define a method to apply production settings to this configuration, used in gulpfile:
+Export a method that applies production settings (used in gulpfile):
 
       useProductionSettings: ->
-        config = @
-        _.merge config,
+
+Production plugins:
+
+        plugins = @plugins.concat([
+
+Minify JavaScript with UglifyJS:
+
+          new webpack.optimize.UglifyJsPlugin()
+        ])
+
+Set `__PRODUCTION__` to true in DefinePlugin.
+
+        for plugin in plugins when plugin.definitions?.__PRODUCTION__
+          plugin.definitions.__PRODUCTION__ = JSON.stringify(true)
+
+        for plugin in plugins when plugin.filename == '[name].css'
+          plugin.filename = '[name]-[hash].css'
+
+Merge in production config (deep merge):
+
+        _.merge @,
 
 Disable development settings:
 
@@ -119,17 +140,6 @@ Add content hashes to the output filenames:
           output:
             filename: "[name]-[hash].js"
 
-Add production-only plugins:
+Production-only plugins:
 
-        config.plugins.concat [
-
-Set __PRODUCTION__ to true
-
-          new webpack.DefinePlugin(__PRODUCTION__ : JSON.stringify(true))
-
-Minify JavaScript with UglifyJS:
-
-          new webpack.optimize.UglifyJsPlugin()
-
-        ]
-        @
+          plugins: plugins
