@@ -117,7 +117,7 @@ Minify JavaScript with UglifyJS:
           new webpack.optimize.UglifyJsPlugin()
         ]
 
-Set `__PRODUCTION__` to true in DefinePlugin:
+Set `__PRODUCTION__` to true in the `DefinePlugin` instance:
 
         for plugin in plugins when plugin.definitions?.__PRODUCTION__
           plugin.definitions.__PRODUCTION__ = JSON.stringify(true)
