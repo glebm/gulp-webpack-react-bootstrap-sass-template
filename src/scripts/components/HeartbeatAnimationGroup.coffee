@@ -1,7 +1,7 @@
 `/** @jsx React.DOM */`
 
 HeartbeatAnimationGroup = React.createClass
-  mixins: [require('../mixins/SetIntervalMixin.coffee')]
+  mixins: [require('scripts/mixins/SetIntervalMixin.coffee')]
 
   getDefaultProps: ->
     phase: 0

@@ -21,7 +21,7 @@ Require jQuery:
 
 Require app:
 
-    StarterApp = require("./components/StarterApp.coffee")
+    StarterApp = require('./components/StarterApp.coffee')
 
 Render app:
 

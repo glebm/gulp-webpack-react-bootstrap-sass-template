@@ -126,6 +126,7 @@ Set compilation target to "web". See [docs](http://webpack.github.io/docs/config
 
 Set development options by default:
 
+      cache: true
       debug: true
       # We are watching in Gulp, so tell webpack not to watch
       watch: false
@@ -153,7 +154,6 @@ Define how modules should be loaded based on path extension:
 
       module:
         loaders: styleModLoaders.concat(scriptModLoaders).concat(staticModLoaders)
-        noParse: /\.min\.js$/
 
 Define the plugins:
 
@@ -197,7 +197,11 @@ Disable development settings:
           watch: false
           devtool: null
 
+Turn on optimizations:
+
           plugins: @plugins.concat [
+
+            new webpack.optimize.OccurenceOrderPlugin()
 
 Minify JavaScript with UglifyJS:
 
