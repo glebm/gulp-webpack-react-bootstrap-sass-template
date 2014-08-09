@@ -5,8 +5,9 @@ It also manages loading via JavaScript `require`, Sass `@import`, and CSS `url()
 
 First, require the dependencies:
 
-    path    = require('path')
     webpack = require('webpack')
+    fs      = require('fs')
+    path    = require('path')
     _       = require('lodash')
 
 
@@ -16,11 +17,15 @@ Define an empty configuration:
 
 Entry bundles, i.e. package source paths. See [docs](http://webpack.github.io/docs/configuration.html#entry).
 
-    module.exports.entry =
+    entries = module.exports.entry =
       "main"            : "./src/scripts/main.litcoffee"
       "styles"          : "./src/styles/styles.scss"
       "vendor/es5-shim" : "./bower_components/es5-shim/es5-shim.js"
       "vendor/es5-sham" : "./bower_components/es5-shim/es5-sham.js"
+
+Define compiled distribution output directory:
+
+    outputDir = path.join(__dirname, "dist", "assets")
 
 ## Loaders
 
@@ -107,7 +112,7 @@ Set development options by default:
 Output options:
 
       output:
-        path         : path.join(__dirname, "dist", "assets")
+        path         : outputDir
         publicPath   : "/assets/"
         filename     : "[name].js"
         chunkFilename: "[name].[id].[chunkhash].js"
@@ -141,7 +146,7 @@ Define the plugins:
 
 Export a method that applies production settings (used in gulpfile):
 
-      useProductionSettings: ->
+      mergeProductionConfig: ->
 
 Production plugins:
 
@@ -173,4 +178,22 @@ Add content hashes to the output filenames:
 Minify JavaScript with UglifyJS:
 
             new webpack.optimize.UglifyJsPlugin()
+
+Generate asset -> asset-hash manifest:
+
+            generateManifestPlugin = (compiler) ->
+              @plugin 'done', (stats) ->
+                stats = stats.toJson()
+
+Set target path extension to `.css` for style assets, because we use ExtractTextPlugin
+
+                assetStats = stats.assetsByChunkName
+                for entryName, entryPath of assetStats
+                  if /\.(?:scss|sass|css)$/.test(entries[entryName])
+                    assetStats[entryName] = entryPath.replace(/\.js$/, '.css')
+
+Write asset-ref -> asset-hash manifest to outputDir/stats.json
+
+                fs.writeFileSync(path.join(outputDir, "asset-stats.json"), JSON.stringify(stats.assetsByChunkName, null, 2))
+
           ]

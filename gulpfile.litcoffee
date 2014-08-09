@@ -65,8 +65,6 @@ Webpack configuration:
 
     paths.webpackConfig = './webpack.config.litcoffee'
     webpackConfig = require(paths.webpackConfig)
-    webpackCssEntries = ['styles']
-
 
 ## Tasks
 
@@ -112,8 +110,8 @@ Production build:
 
     g.task 'prod', (cb) ->
       # Apply production config, it will append hashes to file names among other things
-      webpackConfig.useProductionSettings()
-      runSequence 'clean', 'build', 'gzip', cb
+      webpackConfig.mergeProductionConfig()
+      runSequence 'clean', 'build', 'build-replace-asset-refs', 'gzip', cb
 
 ### `clean`
 
@@ -137,10 +135,6 @@ Run webpack to process CoffeeScript, JSX, Sass, inline small resources into the 
       webpack webpackConfig, (err, stats) ->
         if (err) then throw new gutil.PluginError("webpack", err)
         gutil.log("[webpack]", stats.toString(colors: tty.isatty(process.stdout.fd)))
-        # If webpack is configured to add hashes:
-        if /\[hash\]/.test(webpackConfig.output.filename)
-          # Add the hashes to URLs in files that reference the assets:
-          replaceWebpackAssetUrlsInFile(path, stats, webpackConfig) for path in paths.replaceAssetRefs
         cb()
 
 ### `copy`
@@ -159,6 +153,16 @@ GZip assets:
       .on('error', handleErrors)
       .pipe(gzip())
       .pipe(g.dest paths.dist)
+
+### `build-replace-asset-refs`
+
+Add fingerprinting hashes to asset references:
+
+    g.task 'build-replace-asset-refs', (cb) ->
+      stats = require("./#{paths.dist}/assets/asset-stats.json")
+      for p in paths.replaceAssetRefs
+        replaceWebpackAssetUrlsInFile p, stats
+      cb()
 
 ## Helpers
 
@@ -180,7 +184,7 @@ Create development assets server and a live reload server
 
 Replace asset URLs with the ones from Webpack in a file:
 
-    replaceWebpackAssetUrlsInFile = (filename, stats, config) ->
+    replaceWebpackAssetUrlsInFile = (filename, stats) ->
 
 Use a `through2` pipe to replace file contents in the vinyl virtual file system:
 
@@ -188,7 +192,7 @@ Use a `through2` pipe to replace file contents in the vinyl virtual file system:
       .on('error', handleErrors)
       .pipe(
         through2.obj (vinylFile, enc, tCb) ->
-          vinylFile.contents = new Buffer(replaceWebpackAssetUrls(String(vinylFile.contents), stats, config))
+          vinylFile.contents = new Buffer(replaceWebpackAssetUrls(String(vinylFile.contents), stats))
           @push vinylFile
           tCb()
       )
@@ -198,39 +202,24 @@ Use a `through2` pipe to replace file contents in the vinyl virtual file system:
 
 Replace asset URLs with the ones from Webpack:
 
-    replaceWebpackAssetUrls = (text, stats, config) ->
-
-Get webpack stats. `stats.toJson()` is an object, not a string as the name suggests.
-
-      wpStats    = stats.toJson()
-
-Compile a regexp for quickly testing against a list of CSS entries (used below):
-
-      cssEntryRe = new RegExp "^(?:#{webpackCssEntries.join('|')})$"
+    replaceWebpackAssetUrls = (text, stats) ->
 
 For each entry in Webpack stats (such as `{'main': 'assets/main-abcde.js'}`):
 
-      for entryName, targetPath of wpStats.assetsByChunkName
+      for entryName, targetPath of stats
 
 First, figure out what the entry's file extension is:
 
 Webpack compiles CSS to JS, so `targetPath` always has `.js` extension. Let's check against a a whitelist:
 
-        entryExt = if cssEntryRe.test(entryName) then '.css' else '.js'
-
 If source-maps are on, then targetPath is an array, such as [ 'file.js', 'file.js.map' ]. Get the right file:
 
         if util.isArray(targetPath)
-          targetPath = _.find targetPath, (p) -> path.extname(p).toLowerCase() == entryExt
+          targetPath = _.find targetPath, (p) -> path.extname(p).toLowerCase() != '.map'
 
-Set `targetPath` extension to `.css` because we use ExtractTextPlugin to compile CSS to a `.css` file:
+Replace basic path with the hashed path:
 
-        if entryExt == '.css'
-          targetPath = targetPath.replace /\.js$/, '.css'
-
-Replace basic path with the output path:
-
-        text = text.replace "#{entryName}#{entryExt}", targetPath
+        text = text.replace "#{entryName}#{path.extname(targetPath)}", targetPath
 
 All done:
 
