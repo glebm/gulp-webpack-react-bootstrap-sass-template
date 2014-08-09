@@ -1,7 +1,7 @@
 # Gulp Asset Pipeline Configuration
 
-This [Gulp](https://github.com/gulpjs/gulp/) configuration file contains to compile the assets.
-In addition, it contains a task to launch a development asset web server.
+This [Gulp](https://github.com/gulpjs/gulp/) configuration file defines tasks to compile the assets.
+It also defines a development asset web server task.
 
 ## Require packages
 
