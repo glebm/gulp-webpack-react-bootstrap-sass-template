@@ -63,7 +63,7 @@ Files not handled with Webpack that reference Webpack assets:
 
 Webpack configuration:
 
-    paths.webpackConfig = './webpack.config.coffee'
+    paths.webpackConfig = './webpack.config.litcoffee'
     webpackConfig = require(paths.webpackConfig)
 
 
@@ -87,7 +87,7 @@ Run webpack to process CoffeeScript, JSX, Sass, inline small resources into the 
           replaceWebpackAssetUrlsInFile(path, stats, webpackConfig) for path in paths.replaceAssetRefs
         cb()
 
-Copy assets not handled not with webpack to the distribution:
+Copy non-webpack assets to the distribution:
 
     g.task 'copy', ->
       g.src([paths.srcFiles].concat(paths.webpackPaths.map (path) -> "!#{path}")).pipe(g.dest paths.dist)

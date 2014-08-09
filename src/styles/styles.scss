@@ -1,8 +1,9 @@
 $icon-font-path: '~bootstrap-sass-official/assets/fonts/bootstrap/';
+$brand-primary: #8355ff;
 @import "bootstrap-sass-official/assets/stylesheets/bootstrap";
 
 body {
-  background-color: #cfa;
+  background-color: lighten($brand-primary, 30%);
 }
 
 .bs-masthead {
@@ -11,9 +12,11 @@ body {
   text-align: center;
   text-shadow: 0 1px 0 rgba(0,0,0,.15);
   h1 {
-    font-size: 50px;
     line-height: 1;
-    color: #d82a00;
+    color: darken($brand-primary, 35%);
+    @media (min-width: $screen-sm-min) {
+      font-size: 50px;
+    }
   }
 }
 
@@ -25,5 +28,10 @@ body {
 
 .fade-enter.fade-enter-active {
   opacity: 1;
+}
+
+.test-features {
+  max-width: 500px;
+  margin: 0 auto;
 }
 

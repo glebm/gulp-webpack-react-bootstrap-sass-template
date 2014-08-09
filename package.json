@@ -12,7 +12,6 @@
     "coffee-loader": "~0.7.2",
     "coffee-script": "*",
     "css-loader": "^0.7.0",
-    "ejs-loader": "^0.1.0",
     "express": "~4.8.2",
     "extract-text-webpack-plugin": "~0.2.4",
     "file-loader": "^0.6.1",

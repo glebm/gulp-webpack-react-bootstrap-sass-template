@@ -1,37 +1,54 @@
 `/** @jsx React.DOM */`
 
+cx = React.addons.classSet
 Masthead = require("./Masthead.coffee")
 
 ReactCSSTransitionGroup = React.addons.CSSTransitionGroup
 
 FadeImage = React.createClass
-  componentDidMount: ->
-    self = this;
-
   render: ->
+    classes = ['img-responsive'].concat(this.props.className || []).join(' ')
     `(
       <ReactCSSTransitionGroup transitionName="fade">
-        <img src={this.props.url} key={this.props.url} />
+        <img className={classes} src={this.props.url} key={this.props.url} />
       </ReactCSSTransitionGroup>
     )`
 imageURL = "/images/BladeRunner.gif"
 
-StarterApp = React.createClass
-  render: () ->
+Tag = React.createClass
+  render: ->
     `(
-      <div className='main'>
-        <Masthead title="Gulp + Webpack (CoffeeScript, Sass, JSX) + React + Bootstrap for Sass">
-          This template brings together all the pieces you need to start building your first React app.
-          Gulp is used for orchastrating the build process, and Webpack is used to combine the Javascripts together.
-          <p className='lead'>
-            Search icon <i className="glyphicon glyphicon-search"> </i>
-            <br />
-            {'{1 + 2}'} = {1 + 2}
+      <span className='label label-primary'>{this.props.children}</span>
+    )`
+
+StarterApp = React.createClass
+  render: ->
+    `(
+      <div className='main text-center'>
+        <Masthead title="Gulp, Webpack, React, bootstrap-sass.">
+          <p>
+            This template brings together all the pieces you need to start building your first React app. <br />
+            Gulp is used for orchestrating the build process, and Webpack is used to compile and package assets.
           </p>
+          <p>
+            <Tag>Sass</Tag> <Tag>CoffeeScript</Tag> <Tag>JSX</Tag> <Tag>Autoprefixer</Tag>
+          </p>
+          <table className='table test-features'>
+            <tbody>
+              <tr>
+                <td className='text-right'> Glyphicon                                   </td>
+                <td> <code>glyphicon-user</code>                                        </td>
+                <td className='text-left'> <i className="glyphicon glyphicon-user"></i> </td>
+              </tr>
+              <tr>
+                <td className='text-right'> React expression                            </td>
+                <td> <code>{'{15 * 20}'}</code>                                           </td>
+                <td className='text-left'> {15 * 20}                                      </td>
+              </tr>
+            </tbody>
+          </table>
         </Masthead>
-        <div className='text-center'>
-          <FadeImage url={imageURL} />
-        </div>
+        <FadeImage className='center-block' url={imageURL} />
       </div>
     )`
 
