@@ -212,7 +212,7 @@ For each entry in Webpack stats (such as `{'main': 'assets/main-abcde.js'}`):
 
       for entryName, targetPath of wpStats.assetsByChunkName
 
-First, Figure out what the entry's file extension is:
+First, figure out what the entry's file extension is:
 
 Webpack compiles CSS to JS, so `targetPath` always has `.js` extension. Let's check against a a whitelist:
 
@@ -221,7 +221,7 @@ Webpack compiles CSS to JS, so `targetPath` always has `.js` extension. Let's ch
 If source-maps are on, then targetPath is an array, such as [ 'file.js', 'file.js.map' ]. Get the right file:
 
         if util.isArray(targetPath)
-          targetPath = _.find targetPath (path) -> path.extname(filename).toLowerCase() == entryExt
+          targetPath = _.find targetPath, (p) -> path.extname(p).toLowerCase() == entryExt
 
 Set `targetPath` extension to `.css` because we use ExtractTextPlugin to compile CSS to a `.css` file:
 
