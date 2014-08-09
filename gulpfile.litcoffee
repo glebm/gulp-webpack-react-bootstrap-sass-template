@@ -156,7 +156,7 @@ Run webpack to process CoffeeScript, JSX, Sass, inline small resources into the 
 Copy non-webpack assets to the distribution:
 
     g.task 'copy', ->
-      g.src([paths.srcFiles].concat(paths.webpackPaths.map (path) -> "!#{path}")).pipe(g.dest paths.dist)
+      g.src([paths.srcFiles].concat(paths.webpackPaths.concat(paths.replaceAssetRefs).map (path) -> "!#{path}")).pipe(g.dest paths.dist)
 
 ### `gzip`
 
@@ -172,11 +172,12 @@ GZip assets:
 
 Add fingerprinting hashes to asset references:
 
-    g.task 'build-replace-asset-refs', (cb) ->
-      stats = requireUncached("./#{paths.dist}/assets/asset-stats.json")
-      for p in paths.replaceAssetRefs
-        replaceWebpackAssetUrlsInFile p, stats, webpackConfig.output.publicPath
-      cb()
+    g.task 'build-replace-asset-refs', ->
+      g.src(paths.replaceAssetRefs).pipe(
+        replaceWebpackAssetUrlsInFiles(
+          requireUncached("./#{paths.dist}/assets/asset-stats.json"),
+          webpackConfig.output.publicPath
+        )).pipe(g.dest paths.dist)
 
 ### `deploy-gh-pages`
 
@@ -218,19 +219,16 @@ Create development assets server and a live reload server
 
 Replace asset URLs with the ones from Webpack in a file:
 
-    replaceWebpackAssetUrlsInFile = (filename, stats, publicPath) ->
+    replaceWebpackAssetUrlsInFiles = (stats, publicPath) ->
+      filePaths = []
+      collectFileName = (file, enc, callback) ->
 
 Use a `through2` pipe to replace file contents in the vinyl virtual file system:
 
-      g.src(filename)
-      .on('error', handleErrors)
-      .pipe(
-        through2.obj (vinylFile, enc, tCb) ->
-          vinylFile.contents = new Buffer(replaceWebpackAssetUrls(String(vinylFile.contents), stats, publicPath))
-          @push vinylFile
-          tCb()
-      )
-      .pipe(g.dest(paths.dist))
+      through2.obj (vinylFile, enc, cb) ->
+        vinylFile.contents = new Buffer(replaceWebpackAssetUrls(String(vinylFile.contents), stats, publicPath))
+        @push vinylFile
+        cb()
 
 ### `replaceWebpackAssetUrls`
 
