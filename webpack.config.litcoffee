@@ -1,7 +1,7 @@
 # Webpack Configuration
 
-[Webpack](https://github.com/webpack/webpack) handles asset compilation (Sass, CoffeeScript, etc),
-and processes JS `require`, Sass `@import`, and CSS `url()`.
+[Webpack](https://github.com/webpack/webpack) handles asset compilation (Sass, CoffeeScript, etc).
+It also manages loading via JavaScript `require`, Sass `@import`, and CSS `url()`.
 
 First, require the dependencies:
 
@@ -9,7 +9,7 @@ First, require the dependencies:
     webpack = require('webpack')
     _       = require('lodash')
 
-## CSS configuration
+## Prepare CSS configuration
 
 List of loader names for CSS files:
 
@@ -33,7 +33,7 @@ Override style loaders to use `ExtractTextPlugin`:
       test: e.test
       loader: ExtractTextPlugin.extract(e.loaders.slice(1).join('!'))
 
-## Configuration
+## Export configuration
 
     module.exports =
 
@@ -102,7 +102,7 @@ Define the plugins:
       ]
 
 
-## Production
+## Production overrides
 
 Export a method that applies production settings (used in gulpfile):
 
