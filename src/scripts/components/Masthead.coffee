@@ -1,7 +1,8 @@
 `/** @jsx React.DOM */`
 
 Masthead = React.createClass
-  render: () ->
+
+  render: ->
     `(
       <div className='bs-masthead'>
         <div className="container">

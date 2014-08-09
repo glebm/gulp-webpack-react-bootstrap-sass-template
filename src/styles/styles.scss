@@ -20,7 +20,6 @@ body {
   }
 }
 
-
 .fade-enter {
   opacity: 0.01;
   transition: opacity 5s ease-in;
@@ -35,3 +34,11 @@ body {
   margin: 0 auto;
 }
 
+.powered-by-panel {
+  max-width: 1032px;
+  margin: 0 auto;
+  text-align: center;
+  > .panel-body > div {
+    display: inline-block;
+  }
+}

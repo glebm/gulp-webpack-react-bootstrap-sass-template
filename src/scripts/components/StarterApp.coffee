@@ -2,24 +2,15 @@
 
 cx = React.addons.classSet
 Masthead = require("./Masthead.coffee")
-
-ReactCSSTransitionGroup = React.addons.CSSTransitionGroup
-
-FadeImage = React.createClass
-  render: ->
-    classes = ['img-responsive'].concat(this.props.className || []).join(' ')
-    `(
-      <ReactCSSTransitionGroup transitionName="fade">
-        <img className={classes} src={this.props.url} key={this.props.url} />
-      </ReactCSSTransitionGroup>
-    )`
-imageURL = "/images/BladeRunner.gif"
+HeartbeatAnimationGroup = require("./HeartbeatAnimationGroup.coffee")
 
 Tag = React.createClass
   render: ->
     `(
       <span className='label label-primary'>{this.props.children}</span>
     )`
+
+logoUrls = ["gulp-logo.png", "webpack-logo.png", "react-logo.png", "sass-logo.png", "twbs-logo.png"].map (p) -> "/images/#{p}"
 
 StarterApp = React.createClass
   render: ->
@@ -48,7 +39,18 @@ StarterApp = React.createClass
             </tbody>
           </table>
         </Masthead>
-        <FadeImage className='center-block' url={imageURL} />
+        <div className='powered-by-panel panel panel-primary'>
+          <div className='panel-heading'>
+            <h2 className='panel-title'>Powered By</h2>
+          </div>
+          <div className='panel-body'>
+            {logoUrls.map(function(imageURL, i){
+              return <HeartbeatAnimationGroup phase={200 * ((i + logoUrls.length / 2) % logoUrls.length)}>
+                       <img className='img-responsive' src={imageURL} />
+                     </HeartbeatAnimationGroup>;
+            })}
+          </div>
+        </div>
       </div>
     )`
 
