@@ -69,48 +69,22 @@ Webpack configuration:
 
 ## Tasks
 
-Clean (remove) the distribution folder:
+Show help when invoked with no arguments
 
-    g.task 'clean', ->
-      g.src(paths.dist, read: false).pipe(clean())
+    g.task 'default', ->
+      help = """
+        Usage: bin/gulp [command]
 
-Run webpack to process CoffeeScript, JSX, Sass, inline small resources into the CSS, etc:
+        Available commands:
+          bin/gulp              # display this help message
+          bin/gulp dev          # build and run dev server
+          bin/gulp prod         # production build, hash and gzip
+          bin/gulp clean        # rm /dist
+          bin/gulp build        # development build
+      """
+      setTimeout (-> console.log help), 200
 
-    g.task 'webpack', (cb) ->
-      gutil.log("[webpack]", 'Compiling...')
-      webpack webpackConfig, (err, stats) ->
-        if (err) then throw new gutil.PluginError("webpack", err)
-        gutil.log("[webpack]", stats.toString(colors: tty.isatty(process.stdout.fd)))
-        # If webpack is configured to add hashes:
-        if /\[hash\]/.test(webpackConfig.output.filename)
-          # Add the hashes to URLs in files that reference the assets:
-          replaceWebpackAssetUrlsInFile(path, stats, webpackConfig) for path in paths.replaceAssetRefs
-        cb()
-
-Copy non-webpack assets to the distribution:
-
-    g.task 'copy', ->
-      g.src([paths.srcFiles].concat(paths.webpackPaths.map (path) -> "!#{path}")).pipe(g.dest paths.dist)
-
-Build all assets (development build):
-
-    g.task 'build', ['webpack', 'copy'], ->
-
-
-GZip assets:
-
-    g.task 'gzip', ->
-      g.src(paths.distFiles)
-      .on('error', handleErrors)
-      .pipe(gzip())
-      .pipe(g.dest paths.dist)
-
-Production build:
-
-    g.task 'prod', (cb) ->
-      # Apply production config, it will append hashes to file names among other things
-      webpackConfig.useProductionSettings()
-      runSequence 'clean', 'build', 'gzip', cb
+### `dev`
 
 Run a development server:
 
@@ -131,17 +105,59 @@ Run a development server:
         servers.liveReload.changed body: {files: [evt.path]}
 
 
-Show help when invoke with no arguments
+### `prod`
 
-    g.task 'default', ['build'], ->
-      setTimeout ->
-        gutil.log "**********************************************"
-        gutil.log "* gulp              (development build)"
-        gutil.log "* gulp clean        (rm /dist)"
-        gutil.log "* gulp prod         (production build, hash and gzip)"
-        gutil.log "* gulp dev          (build and run dev server)"
-        gutil.log "**********************************************"
-      , 1000
+Production build:
+
+    g.task 'prod', (cb) ->
+      # Apply production config, it will append hashes to file names among other things
+      webpackConfig.useProductionSettings()
+      runSequence 'clean', 'build', 'gzip', cb
+
+### `clean`
+
+Clean (remove) the distribution folder:
+
+    g.task 'clean', ->
+      g.src(paths.dist, read: false).pipe(clean())
+
+### `build`
+
+Build all assets (development build):
+
+    g.task 'build', ['webpack', 'copy'], ->
+
+### `webpack`
+
+Run webpack to process CoffeeScript, JSX, Sass, inline small resources into the CSS, etc:
+
+    g.task 'webpack', (cb) ->
+      gutil.log("[webpack]", 'Compiling...')
+      webpack webpackConfig, (err, stats) ->
+        if (err) then throw new gutil.PluginError("webpack", err)
+        gutil.log("[webpack]", stats.toString(colors: tty.isatty(process.stdout.fd)))
+        # If webpack is configured to add hashes:
+        if /\[hash\]/.test(webpackConfig.output.filename)
+          # Add the hashes to URLs in files that reference the assets:
+          replaceWebpackAssetUrlsInFile(path, stats, webpackConfig) for path in paths.replaceAssetRefs
+        cb()
+
+### `copy`
+
+Copy non-webpack assets to the distribution:
+
+    g.task 'copy', ->
+      g.src([paths.srcFiles].concat(paths.webpackPaths.map (path) -> "!#{path}")).pipe(g.dest paths.dist)
+
+### `gzip`
+
+GZip assets:
+
+    g.task 'gzip', ->
+      g.src(paths.distFiles)
+      .on('error', handleErrors)
+      .pipe(gzip())
+      .pipe(g.dest paths.dist)
 
 ## Helpers
 
