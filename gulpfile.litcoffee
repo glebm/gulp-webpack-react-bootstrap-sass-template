@@ -220,10 +220,8 @@ Create development assets server and a live reload server
 Replace asset URLs with the ones from Webpack in a file:
 
     replaceWebpackAssetUrlsInFiles = (stats, publicPath) ->
-      filePaths = []
-      collectFileName = (file, enc, callback) ->
 
-Use a `through2` pipe to replace file contents in the vinyl virtual file system:
+Return a `through2` object (gulp plugin) that replaces file contents in Vinyl virtual file system:
 
       through2.obj (vinylFile, enc, cb) ->
         vinylFile.contents = new Buffer(replaceWebpackAssetUrls(String(vinylFile.contents), stats, publicPath))
