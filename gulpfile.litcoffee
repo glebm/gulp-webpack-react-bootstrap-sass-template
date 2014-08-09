@@ -86,11 +86,12 @@ Show help when invoked with no arguments
         Usage: bin/gulp [command]
 
         Available commands:
-          bin/gulp              # display this help message
-          bin/gulp dev          # build and run dev server
-          bin/gulp prod         # production build, hash and gzip
-          bin/gulp clean        # rm /dist
-          bin/gulp build        # development build
+          bin/gulp                 # display this help message
+          bin/gulp dev             # build and run dev server
+          bin/gulp prod            # production build, hash and gzip
+          bin/gulp clean           # rm /dist
+          bin/gulp build           # development build
+          bin/gulp deploy-gh-pages # deploy to Github Pages
       """
       setTimeout (-> console.log help), 200
 
