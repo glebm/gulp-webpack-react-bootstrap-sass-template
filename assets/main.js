@@ -65,7 +65,7 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	/** @jsx React.DOM */;
-	var HeartbeatAnimationGroup, Masthead, StarterApp, Tag, cx, logoUrls;
+	var HeartbeatAnimationGroup, Masthead, StarterApp, Tag, cx, poweredBy, renderPoweredByItems;
 	
 	cx = React.addons.classSet;
 	
@@ -81,9 +81,19 @@
 	  }
 	});
 	
-	logoUrls = ["gulp-logo.png", "webpack-logo.png", "react-logo.png", "sass-logo.png", "twbs-logo.png"].map(function(p) {
-	  return !(function webpackMissingModule() { var e = new Error("Cannot find module \"~src/images\""); e.code = 'MODULE_NOT_FOUND'; throw e; }());
-	});
+	poweredBy = [
+	  {
+	    logoURL: __webpack_require__(10)
+	  }, {
+	    logoURL: __webpack_require__(11)
+	  }, {
+	    logoURL: __webpack_require__(12)
+	  }, {
+	    logoURL: __webpack_require__(13)
+	  }, {
+	    logoURL: __webpack_require__(14)
+	  }
+	];
 	
 	StarterApp = React.createClass({displayName: 'StarterApp',
 	  render: function() {
@@ -117,17 +127,27 @@
 	            React.DOM.h2({className: "panel-title"}, "Powered By")
 	          ), 
 	          React.DOM.div({className: "panel-body"}, 
-	            logoUrls.map(function(imageURL, i){
-	              return HeartbeatAnimationGroup({phase: 200 * ((i + logoUrls.length / 2) % logoUrls.length)}, 
-	                       React.DOM.img({className: "img-responsive", src: imageURL, key: imageURL})
-	                     );
-	            })
+	            renderPoweredByItems(poweredBy)
 	          )
 	        )
 	      )
 	    );
 	  }
 	});
+	
+	renderPoweredByItems = function(items) {
+	  var n;
+	  n = items.length;
+	  return items.map(function(item, i) {
+	    var imageURL;
+	    imageURL = item.logoURL;
+	    return (
+	      HeartbeatAnimationGroup({phase: 200 * ((i + n / 2) % n)}, 
+	      React.DOM.img({className: "img-responsive", src: imageURL, key: imageURL})
+	      )
+	    );
+	  });
+	};
 	
 	module.exports = StarterApp;
 
@@ -271,6 +291,36 @@
 	
 	module.exports = SetIntervalMixin;
 
+
+/***/ },
+/* 10 */
+/***/ function(module, exports, __webpack_require__) {
+
+	module.exports = __webpack_require__.p + "dd77654441a3f1baf0b9b8336e8b69e1.png"
+
+/***/ },
+/* 11 */
+/***/ function(module, exports, __webpack_require__) {
+
+	module.exports = __webpack_require__.p + "81ef53a0849b68bb0c2b268893a7115b.png"
+
+/***/ },
+/* 12 */
+/***/ function(module, exports, __webpack_require__) {
+
+	module.exports = __webpack_require__.p + "6309da59b589575e3b94efb236ebe470.png"
+
+/***/ },
+/* 13 */
+/***/ function(module, exports, __webpack_require__) {
+
+	module.exports = __webpack_require__.p + "2c74379e2a5422d4ba68815639354c81.png"
+
+/***/ },
+/* 14 */
+/***/ function(module, exports, __webpack_require__) {
+
+	module.exports = __webpack_require__.p + "a05335dcf445f1a64883fd9b242c44b7.png"
 
 /***/ }
 /******/ ])
