@@ -65,6 +65,7 @@ Webpack configuration:
 
     paths.webpackConfig = './webpack.config.litcoffee'
     webpackConfig = require(paths.webpackConfig)
+    webpackCssEntries = ['styles']
 
 
 ## Tasks
@@ -161,6 +162,8 @@ GZip assets:
 
 ## Helpers
 
+### `createServers`
+
 Create development assets server and a live reload server
 
     createServers = (port, lrport) ->
@@ -173,9 +176,14 @@ Create development assets server and a live reload server
         gutil.log 'HTTP server listening on', port
       {liveReload, app}
 
+### `replaceWebpackAssetUrlsInFile`
+
 Replace asset URLs with the ones from Webpack in a file:
 
     replaceWebpackAssetUrlsInFile = (filename, stats, config) ->
+
+Use a `through2` pipe to replace file contents in the vinyl virtual file system:
+
       g.src(filename)
       .on('error', handleErrors)
       .pipe(
@@ -186,21 +194,49 @@ Replace asset URLs with the ones from Webpack in a file:
       )
       .pipe(g.dest(paths.dist))
 
+### `replaceWebpackAssetUrls`
+
 Replace asset URLs with the ones from Webpack:
 
     replaceWebpackAssetUrls = (text, stats, config) ->
-      statsObj = stats.toJson()
-      for chunkName, fullName of statsObj.assetsByChunkName
-        # Assume JS extension unless one is specified
-        if /^(?:styles)$/.test(chunkName)
-          chunkExt = '.css'
-          fullName = fullName.replace(/\.js$/, '.css')
-        else
-          chunkExt = '.js'
-        # If source-maps are on, then fullName is an array, such as [ 'file.js', 'file.js.map' ]
-        fullName = (filename for filename in fullName when path.extname(filename).toLowerCase() == chunkExt)[0] if util.isArray(fullName)
-        text = text.replace chunkName + chunkExt, fullName
+
+Get webpack stats. `stats.toJson()` is an object, not a string as the name suggests.
+
+      wpStats    = stats.toJson()
+
+Compile a regexp for quickly testing against a list of CSS entries (used below):
+
+      cssEntryRe = new RegExp "^(?:#{webpackCssEntries.join('|')})$"
+
+For each entry in Webpack stats (such as `{'main': 'assets/main-abcde.js'}`):
+
+      for entryName, targetPath of wpStats.assetsByChunkName
+
+First, Figure out what the entry's file extension is:
+
+Webpack compiles CSS to JS, so `targetPath` always has `.js` extension. Let's check against a a whitelist:
+
+        entryExt = if cssEntryRe.test(entryName) then '.css' else '.js'
+
+If source-maps are on, then targetPath is an array, such as [ 'file.js', 'file.js.map' ]. Get the right file:
+
+        if util.isArray(targetPath)
+          targetPath = _.find targetPath (path) -> path.extname(filename).toLowerCase() == entryExt
+
+Set `targetPath` extension to `.css` because we use ExtractTextPlugin to compile CSS to a `.css` file:
+
+        if entryExt == '.css'
+          targetPath = targetPath.replace /\.js$/, '.css'
+
+Replace basic path with the output path:
+
+        text = text.replace "#{entryName}#{entryExt}", targetPath
+
+All done:
+
       text
+
+### `handleErrors`
 
 Route non-gulp errors through gulp-notify:
 
