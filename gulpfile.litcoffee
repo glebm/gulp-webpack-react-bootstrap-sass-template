@@ -138,7 +138,7 @@ Clean (remove) the distribution folder:
 Build all assets (development build):
 
     g.task 'build', (cb) ->
-      runSequence 'webpack', 'copy', 'build-replace-asset-refs', cb
+      runSequence 'webpack', 'build-replace-asset-refs', 'copy', cb
 
 ### `webpack`
 
@@ -191,7 +191,7 @@ Build for gh-pages-branch. Same as production but do not append hashes:
 Deploy to gh-pages branch:
 
     g.task 'deploy-gh-pages', ['build-gh-pages'], ->
-      g.src(paths.distFiles).pipe(deployToGithubPages())
+      g.src(paths.distFiles).pipe(deployToGithubPages(cacheDir: './tmp/.gh-pages-cache'))
 
 ## Helpers
 
