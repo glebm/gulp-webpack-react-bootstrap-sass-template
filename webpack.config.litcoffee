@@ -176,35 +176,36 @@ Set `__PRODUCTION__` to true in the `DefinePlugin` instance:
 
         definePlugin.definitions.__PRODUCTION__ = JSON.stringify(true)
 
-
-        if addHashes
-
 Add content hashes to the output filenames:
 
-          _.merge @,
-            output:
-              filename: "[name]-[hash].js"
-
-Tell `ExtractTextPlugin` to append hashes (BROKEN, see [plugin issue #9](https://github.com/webpack/extract-text-webpack-plugin/issues/9)):
-
-          extractTextPlugin.filename = '[name]-[hash].css'
-
         _.merge @,
+          output:
+            filename: "[name]-[hash].js"
+
+Tell `ExtractTextPlugin` to append hashes:
+
+        extractTextPlugin.filename = '[name]-[hash].css'
 
 Disable development settings:
 
+        _.merge @,
           debug: false
           watch: false
           devtool: null
 
-Turn on optimizations:
+Turn on production optimizations:
 
           plugins: @plugins.concat [
 
-            new webpack.optimize.OccurenceOrderPlugin()
+Order the modules and chunks by occurrence. This saves space, because often referenced modules and chunks get smaller ids.
+
+            new webpack.optimize.OccurenceOrderPlugin(preferEntry: true)
 
 Minify JavaScript with UglifyJS:
 
             new webpack.optimize.UglifyJsPlugin()
 
           ]
+
+[Learn more](https://github.com/webpack/docs/wiki/internal-webpack-plugins#optimize)
+about optimization plugins shipped with Webpack.

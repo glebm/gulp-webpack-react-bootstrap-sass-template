@@ -123,7 +123,7 @@ Production build:
 
     g.task 'prod', (cb) ->
       # Apply production config, pass true to append hashes to file names
-      setWebpackConfig loadWebpackConfig().mergeProductionConfig(true)
+      setWebpackConfig loadWebpackConfig().mergeProductionConfig()
       runSequence 'clean', 'build', 'gzip', cb
 
 ### `clean`
@@ -184,7 +184,7 @@ Add fingerprinting hashes to asset references:
 Build for gh-pages-branch. Same as production but do not append hashes:
 
     g.task 'build-gh-pages', (cb) ->
-      webpackConfig = _.merge loadWebpackConfig().mergeProductionConfig(false),
+      webpackConfig = _.merge loadWebpackConfig().mergeProductionConfig(),
         output:
          publicPath: "/gulp-webpack-react-bootstrap-sass-template/assets/"
       runSequence 'clean', 'build', cb
@@ -234,7 +234,7 @@ Replace asset URLs with the ones from Webpack:
 
     replaceWebpackAssetUrls = (text, stats, publicPath) ->
 
-For each entry in Webpack stats (such as `{'main': 'assets/main-abcde.js'}`):
+For each entry in Webpack stats, such as `{'main': 'assets/main-abcde.js'}`:
 
       for entryName, targetPath of stats
 
