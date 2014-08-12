@@ -1,6 +1,6 @@
 {
-  "main": "main.js",
-  "vendor/es5-shim": "vendor/es5-shim.js",
-  "vendor/es5-sham": "vendor/es5-sham.js",
-  "styles": "styles.css"
+  "main": "main-aee522be29bad16c9837.js",
+  "vendor/es5-shim": "vendor/es5-shim-aee522be29bad16c9837.js",
+  "vendor/es5-sham": "vendor/es5-sham-aee522be29bad16c9837.js",
+  "styles": "styles-aee522be29bad16c9837.css"
 }
