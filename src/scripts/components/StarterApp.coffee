@@ -28,7 +28,12 @@ StarterApp = React.createClass
             Gulp is used for orchestrating the build process, and Webpack is used to compile and package assets.
           </p>
           <p>
-            <Tag>Sass</Tag> <Tag>CoffeeScript</Tag> <Tag>JSX</Tag> <Tag>Autoprefixer</Tag>
+            <a className='btn btn-primary btn-lg' href={this.props.githubUrl}>
+              This template on Github <i className='glyphicon glyphicon-arrow-right' />
+            </a>
+          </p>
+          <p>
+            <Tag>Sass</Tag> <Tag>Literate CoffeeScript</Tag> <Tag>JSX</Tag> <Tag>Autoprefixer</Tag>
           </p>
           <table className='table test-features'>
             <tbody>
