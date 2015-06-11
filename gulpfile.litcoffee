@@ -15,6 +15,7 @@ Gulp to handle the pipeline flow:
     notify = require('gulp-notify')
     runSequence = require('run-sequence')
     deployToGithubPages = require('gulp-gh-pages')
+    webserver = require('gulp-webserver')
     _ = require('lodash')
 
 Webpack to compile the assets:
@@ -23,7 +24,6 @@ Webpack to compile the assets:
 
 Express and LiveReload for a development server:
 
-    express = require('express')
     tiny_lr = require('tiny-lr')
 
 A number of low-level utilities:
@@ -89,6 +89,7 @@ Show help when invoked with no arguments
           bin/gulp                 # display this help message
           bin/gulp dev             # build and run dev server
           bin/gulp prod            # production build, hash and gzip
+          bin/gulp serve           # run dev server
           bin/gulp clean           # rm /dist
           bin/gulp build           # development build
           bin/gulp deploy-gh-pages # deploy to Github Pages
@@ -99,8 +100,7 @@ Show help when invoked with no arguments
 
 Run a development server:
 
-    g.task 'dev', ['build'], ->
-      servers = createServers(4000, 35729)
+    g.task 'dev', ['build', 'serve'], ->
       logChange = (evt) -> gutil.log(gutil.colors.cyan(evt.path), 'changed')
       # Run webpack on config changes
       g.watch [paths.webpackConfig], (evt) ->
@@ -114,8 +114,6 @@ Run a development server:
       # Notify browser on distribution changes
       g.watch [paths.distFiles], (evt) ->
         logChange evt
-        servers.liveReload.changed body: {files: [evt.path]}
-
 
 ### `prod`
 
@@ -139,6 +137,21 @@ Build all assets (development build):
 
     g.task 'build', (cb) ->
       runSequence 'webpack', 'build-replace-asset-refs', 'copy', cb
+
+### `serve`
+
+Serve dist folder and inject livereload
+
+    g.task 'serve', ->
+      g.src('./dist')
+        .pipe(webserver {
+          livereload: {
+            enable: true,
+            port: 35729
+          },
+          host: 'localhost',
+          port: 4000
+        })
 
 ### `webpack`
 
@@ -200,20 +213,6 @@ Set the "global" `webpackConfig` to argument.
 
     setWebpackConfig = (conf) ->
       webpackConfig = conf
-
-### `createServers`
-
-Create development assets server and a live reload server
-
-    createServers = (port, lrport) ->
-      liveReload = tiny_lr()
-      liveReload.listen lrport, ->
-        gutil.log 'LiveReload listening on', lrport
-      app = express()
-      app.use express.static(path.resolve paths.dist)
-      app.listen port, ->
-        gutil.log 'HTTP server listening on', port
-      {liveReload, app}
 
 ### `replaceWebpackAssetUrlsInFile`
 
