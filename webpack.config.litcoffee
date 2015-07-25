@@ -200,7 +200,7 @@ Turn on production optimizations:
 
 Order the modules and chunks by occurrence. This saves space, because often referenced modules and chunks get smaller ids.
 
-            new webpack.optimize.OccurenceOrderPlugin(preferEntry: true)
+            new webpack.optimize.OccurenceOrderPlugin(true)
 
 Minify JavaScript with UglifyJS:
 
