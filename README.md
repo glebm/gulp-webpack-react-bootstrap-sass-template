@@ -25,8 +25,7 @@ $ bin/gulp dev
 
 See your app at [http://localhost:4000/](http://localhost:4000/).
 
-For LiveReload, install [Chrome LiveReload extension](https://chrome.google.com/webstore/detail/livereload/jnihajbhpnppcggbcgedagnkighmdlei?hl=en),
-then the browser will automatically reload when any file in /src changes.
+The browser will automatically reload when any file in /src changes.
 
 Production build:
 
