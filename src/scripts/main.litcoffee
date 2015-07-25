@@ -26,5 +26,5 @@ Require app:
 Render app:
 
     githubUrl = 'https://github.com/glebm/gulp-webpack-react-bootstrap-sass-template'
-    React.renderComponent(`<StarterApp githubUrl={githubUrl}/>`, document.getElementById('app'))
+    React.render(`<StarterApp githubUrl={githubUrl}/>`, document.getElementById('app'))
 

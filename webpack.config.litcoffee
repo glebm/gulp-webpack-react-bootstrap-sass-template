@@ -46,7 +46,7 @@ Process CoffeeScript and JSX.
 
 Process Sass and use Autoprefixer.
 
-    cssLoaders = ['style', 'css', 'autoprefixer-loader?last 2 versions']
+    cssLoaders = ['style', 'css', 'autoprefixer-loader?browsers=last 2 versions']
     styleModLoaders = [
       { test: /\.scss$/, loaders: cssLoaders.concat([
           "sass?precision=10&outputStyle=expanded&sourceMap=true&includePaths[]=" + path.resolve(__dirname, './bower_components')]) }
@@ -58,13 +58,14 @@ Process Sass and use Autoprefixer.
 Embed data-URLs into CSS and JS for small images and `.woff` fonts:
 
     staticModLoaders = [
-      { test: /\.gif$/ , loader: "url?limit=10000&mimetype=image/gif" }
-      { test: /\.jpg$/ , loader: "url?limit=10000&mimetype=image/jpg" }
-      { test: /\.png$/ , loader: "url?limit=10000&mimetype=image/png" }
-      { test: /\.woff$/, loader: "url?limit=10000&mimetype=application/font-woff" }
-      { test: /\.ttf$/ , loader: "file?mimetype=application/vnd.ms-fontobject" }
-      { test: /\.eot$/ , loader: "file?mimetype=application/x-font-ttf" }
-      { test: /\.svg$/ , loader: "file?mimetype=image/svg+xml" }
+      { test: /\.gif$/  , loader: "url?limit=10000&mimetype=image/gif" }
+      { test: /\.jpg$/  , loader: "url?limit=10000&mimetype=image/jpg" }
+      { test: /\.png$/  , loader: "url?limit=10000&mimetype=image/png" }
+      { test: /\.woff$/ , loader: "url?limit=10000&mimetype=application/font-woff" }
+      { test: /\.woff2$/, loader: "url?limit=10000&mimetype=application/font-woff2" }
+      { test: /\.ttf$/  , loader: "file?mimetype=application/vnd.ms-fontobject" }
+      { test: /\.eot$/  , loader: "file?mimetype=application/x-font-ttf" }
+      { test: /\.svg$/  , loader: "file?mimetype=image/svg+xml" }
     ]
 
 ### Output CSS to `.css` files
