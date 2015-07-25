@@ -1,6 +1,9 @@
 {
-  "main": "main-e2afbbc58f13a5447065.js",
-  "vendor/es5-shim": "vendor/es5-shim-e2afbbc58f13a5447065.js",
-  "vendor/es5-sham": "vendor/es5-sham-e2afbbc58f13a5447065.js",
-  "styles": "styles-e2afbbc58f13a5447065.css"
+  "main": "main-7d1abf6382833c43edb2.js",
+  "vendor/es5-shim": "vendor/es5-shim-7d1abf6382833c43edb2.js",
+  "vendor/es5-sham": "vendor/es5-sham-7d1abf6382833c43edb2.js",
+  "styles": [
+    "styles-7d1abf6382833c43edb2.css",
+    "styles-7d1abf6382833c43edb2.css"
+  ]
 }
