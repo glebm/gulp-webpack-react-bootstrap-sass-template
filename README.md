@@ -6,7 +6,9 @@ This is a template for a client-side web app compiled using Gulp with Webpack. B
 
 Clone the repo:
 
-`git clone git@github.com:glebm/gulp-webpack-react-bootstrap-sass-template.git`
+```console
+$ git clone --depth 1 git@github.com:glebm/gulp-webpack-react-bootstrap-sass-template.git
+```
 
 Install dependencies from npm and bower:
 
