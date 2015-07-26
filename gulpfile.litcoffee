@@ -23,10 +23,6 @@ Webpack to compile the assets:
 
     webpack = require('webpack')
 
-Express and LiveReload for a development server:
-
-    tiny_lr = require('tiny-lr')
-
 A number of low-level utilities:
 
     util = require('util')
@@ -141,15 +137,12 @@ Build all assets (development build):
 Serve dist folder and inject livereload
 
     g.task 'serve', ['build'], ->
-      g.src('./dist')
-        .pipe(webserver {
-          livereload: {
-            enable: true,
-            port: 35729
-          },
-          host: 'localhost',
-          port: 4000
-        })
+      g.src('./dist').pipe webserver
+        livereload:
+          enable: true
+          port: 35729
+        host: 'localhost'
+        port: 4000
 
 ### `webpack`
 
