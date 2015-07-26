@@ -16,7 +16,7 @@
   "dependencies": {
     "react": "~0.13.3",
     "es5-shim": "~4.1.10",
-    "bootstrap-sass-official": "~3.3.5",
+    "bootstrap-sass": "~3.3.5",
     "jquery": "~2.1.4"
   }
 }

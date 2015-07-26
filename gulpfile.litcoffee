@@ -7,16 +7,17 @@ It also defines a development asset web server task.
 
 Gulp to handle the pipeline flow:
 
+    _ = require('lodash')
+    del = require('del')
+    deployToGithubPages = require('gulp-gh-pages')
     g = require('gulp')
     gutil = require('gulp-util')
-    clean = require('gulp-clean')
-    watch = require('gulp-watch')
     gzip = require('gulp-gzip')
     notify = require('gulp-notify')
     runSequence = require('run-sequence')
-    deployToGithubPages = require('gulp-gh-pages')
+    vinylPaths = require('vinyl-paths')
+    watch = require('gulp-watch')
     webserver = require('gulp-webserver')
-    _ = require('lodash')
 
 Webpack to compile the assets:
 
@@ -111,9 +112,6 @@ Run a development server:
       g.watch [paths.srcFiles], (evt) ->
         logChange evt
         g.start 'build'
-      # Notify browser on distribution changes
-      g.watch [paths.distFiles], (evt) ->
-        logChange evt
 
 ### `prod`
 
@@ -129,7 +127,7 @@ Production build:
 Clean (remove) the distribution folder:
 
     g.task 'clean', ->
-      g.src(paths.dist, read: false).pipe(clean())
+      g.src(paths.dist, read: false).pipe(vinylPaths(del))
 
 ### `build`
 
@@ -142,7 +140,7 @@ Build all assets (development build):
 
 Serve dist folder and inject livereload
 
-    g.task 'serve', ->
+    g.task 'serve', ['build'], ->
       g.src('./dist')
         .pipe(webserver {
           livereload: {
